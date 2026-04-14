@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: api
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID:default}
+            client-secret: ${GOOGLE_CLIENT_SECRET:default}
+            scope: email, profile
+
+jwt:
+  secret: ${JWT_SECRET:default-secret-key-for-development-only-change-in-production-please}
+  access-expiration: 3600000
+  refresh-expiration: 604800000
+
+app:
+  frontend-url: ${FRONTEND_URL:http://localhost:3000}

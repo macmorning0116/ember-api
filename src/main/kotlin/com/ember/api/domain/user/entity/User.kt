@@ -16,4 +16,5 @@ class User(
     val provider: String,
     @Column(nullable = false)
     val providerId: String,
+    var image: String? = null,
 ) : BaseEntity()

@@ -42,8 +42,7 @@ Kotlin + Spring Boot 4 API 서버.
   ```
   feat: 코드 품질 도구 추가
 
-  * Spotless + ktlint 포맷팅 설정 추가
-  * detekt 정적 분석 설정 및 detekt.yml 추가
-  * MockK 테스트 의존성 추가
+  - Spotless + ktlint 포맷팅 설정 추가
+  - detekt 정적 분석 설정 및 detekt.yml 추가
+  - MockK 테스트 의존성 추가
   ```
-- 

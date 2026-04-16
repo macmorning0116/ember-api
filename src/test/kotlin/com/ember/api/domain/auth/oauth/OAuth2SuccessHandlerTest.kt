@@ -4,6 +4,7 @@ import com.ember.api.domain.auth.jwt.JwtProvider
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.mock.web.MockHttpServletRequest
@@ -14,11 +15,12 @@ import java.util.UUID
 
 class OAuth2SuccessHandlerTest {
     private val jwtProvider: JwtProvider = mockk()
+    private val authCodeStore: AuthCodeStore = AuthCodeStore()
     private val frontendUrl = "http://localhost:3000"
-    private val handler = OAuth2SuccessHandler(jwtProvider, frontendUrl)
+    private val handler = OAuth2SuccessHandler(jwtProvider, authCodeStore, frontendUrl)
 
     @Test
-    @DisplayName("OAuth2 인증 성공 시 JWT 발급 후 프론트 리다이렉트")
+    @DisplayName("OAuth2 인증 성공 시 일회용 코드로 프론트 리다이렉트")
     fun onAuthenticationSuccess() {
         val userId = UUID.randomUUID()
         val attributes =
@@ -41,7 +43,7 @@ class OAuth2SuccessHandlerTest {
 
         verify { jwtProvider.generateAccessToken(userId) }
         verify { jwtProvider.generateRefreshToken(userId) }
-        assert(response.redirectedUrl!!.contains("accessToken=access-token"))
-        assert(response.redirectedUrl!!.contains("refreshToken=refresh-token"))
+        assertTrue(response.redirectedUrl!!.contains("code="))
+        assertTrue(!response.redirectedUrl!!.contains("accessToken"))
     }
 }

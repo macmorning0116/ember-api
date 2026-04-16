@@ -13,6 +13,7 @@ import java.util.UUID
 @Component
 class OAuth2SuccessHandler(
     private val jwtProvider: JwtProvider,
+    private val authCodeStore: AuthCodeStore,
     @Value("\${app.frontend-url}") private val frontendUrl: String,
 ) : AuthenticationSuccessHandler {
     override fun onAuthenticationSuccess(
@@ -26,8 +27,8 @@ class OAuth2SuccessHandler(
         val accessToken = jwtProvider.generateAccessToken(userId)
         val refreshToken = jwtProvider.generateRefreshToken(userId)
 
-        val redirectUrl =
-            "$frontendUrl/auth/callback?accessToken=$accessToken&refreshToken=$refreshToken"
-        response.sendRedirect(redirectUrl)
+        val code = authCodeStore.createCode(accessToken, refreshToken)
+
+        response.sendRedirect("$frontendUrl/auth/callback?code=$code")
     }
 }

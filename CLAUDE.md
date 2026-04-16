@@ -30,6 +30,7 @@ Kotlin + Spring Boot 4 API 서버.
   2. `./gradlew detekt` (정적 분석)
   3. `./gradlew test` (테스트 실행)
   4. 실패 시 원인 분석 → 해결 후 재실행 → 통과 확인
+  5. 보안 점검: 민감 정보 노출, 인증/인가 누락, SQL Injection 등 확인
 - 검증 통과 전에는 절대 커밋하지 않는다
 - 모킹은 Mockito 대신 MockK 사용
 - 테스트는 Kotlin + JUnit5로 작성

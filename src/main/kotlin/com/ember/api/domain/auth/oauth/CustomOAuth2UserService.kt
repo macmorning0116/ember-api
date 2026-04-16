@@ -15,22 +15,19 @@ class CustomOAuth2UserService(
     override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User {
         val oAuth2User = super.loadUser(userRequest)
         val provider = userRequest.clientRegistration.registrationId
-
         val attributes = oAuth2User.attributes
-        val providerId = attributes["sub"] as String
-        val email = attributes["email"] as String
-        val name = attributes["name"] as? String ?: email
-        val image = attributes["picture"] as? String
+
+        val oAuthProfile = extractProfile(provider, attributes)
 
         val user =
-            userRepository.findByProviderAndProviderId(provider, providerId)
+            userRepository.findByProviderAndProviderId(provider, oAuthProfile.providerId)
                 ?: userRepository.save(
                     User(
-                        email = email,
-                        name = name,
+                        email = oAuthProfile.email,
+                        name = oAuthProfile.name,
                         provider = provider,
-                        providerId = providerId,
-                        image = image,
+                        providerId = oAuthProfile.providerId,
+                        image = oAuthProfile.image,
                     ),
                 )
 
@@ -40,7 +37,39 @@ class CustomOAuth2UserService(
         return DefaultOAuth2User(
             oAuth2User.authorities,
             mutableAttributes,
-            "email",
+            userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName,
         )
     }
+
+    private fun extractProfile(
+        provider: String,
+        attributes: Map<String, Any>,
+    ): OAuthProfile =
+        when (provider) {
+            "google" ->
+                OAuthProfile(
+                    providerId = attributes["sub"] as String,
+                    email = attributes["email"] as String,
+                    name = attributes["name"] as? String ?: attributes["email"] as String,
+                    image = attributes["picture"] as? String,
+                )
+            "kakao" -> {
+                val kakaoAccount = attributes["kakao_account"] as? Map<*, *> ?: emptyMap<String, Any>()
+                val profile = kakaoAccount["profile"] as? Map<*, *> ?: emptyMap<String, Any>()
+                OAuthProfile(
+                    providerId = attributes["id"].toString(),
+                    email = kakaoAccount["email"] as? String ?: "",
+                    name = profile["nickname"] as? String ?: "",
+                    image = profile["profile_image_url"] as? String,
+                )
+            }
+            else -> throw IllegalArgumentException("Unsupported provider: $provider")
+        }
+
+    private data class OAuthProfile(
+        val providerId: String,
+        val email: String,
+        val name: String,
+        val image: String?,
+    )
 }

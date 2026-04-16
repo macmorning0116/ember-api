@@ -6,6 +6,7 @@ plugins {
     kotlin("plugin.jpa") version "2.2.20"
     id("com.diffplug.spotless") version "7.0.2"
     id("dev.detekt") version "2.0.0-alpha.1"
+    jacoco
 }
 
 group = "com.ember"
@@ -39,6 +40,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-security-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("io.mockk:mockk:1.13.16")
+    testImplementation("com.ninja-squad:springmockk:4.0.2")
     runtimeOnly("org.postgresql:postgresql")
     testRuntimeOnly("com.h2database:h2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -58,6 +60,14 @@ allOpen {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        csv.required.set(true)
+    }
 }
 
 spotless {

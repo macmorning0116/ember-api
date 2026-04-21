@@ -1,0 +1,17 @@
+.gradle
+build
+.idea
+.kotlin
+*.iml
+.git
+.github
+.claude
+docs
+HELP.md
+README.md
+*.md
+!build.gradle.kts
+!settings.gradle.kts
+.env
+.env.*
+application-local.yml

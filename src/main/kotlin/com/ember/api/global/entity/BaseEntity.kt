@@ -17,7 +17,7 @@ import java.util.UUID
 abstract class BaseEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(columnDefinition = "VARCHAR(36)")
+    @Column(columnDefinition = "uuid")
     val id: UUID? = null,
     @CreatedDate
     @Column(nullable = false, updatable = false)

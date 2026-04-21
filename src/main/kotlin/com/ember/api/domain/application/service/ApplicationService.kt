@@ -47,7 +47,7 @@ class ApplicationService(
                 user = user,
                 companyName = request.companyName,
                 careerLevel = request.careerLevel,
-                deadline = request.deadline,
+                deadline = request.deadline?.atStartOfDay(),
                 companySize = request.companySize,
                 status = request.status,
                 url = request.url,
@@ -85,7 +85,7 @@ class ApplicationService(
         if (request.clearDeadline) {
             application.deadline = null
         } else {
-            request.deadline?.let { application.deadline = it }
+            request.deadline?.let { application.deadline = it.atStartOfDay() }
         }
 
         request.coverLetters?.let { coverLetterRequests ->

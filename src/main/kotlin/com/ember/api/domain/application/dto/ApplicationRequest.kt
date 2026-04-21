@@ -6,7 +6,7 @@ import com.ember.api.domain.application.entity.CoverLetterType
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotNull
-import java.time.LocalDateTime
+import java.time.LocalDate
 
 data class CreateApplicationRequest(
     @field:NotBlank(message = "회사명을 입력해주세요.")
@@ -17,7 +17,7 @@ data class CreateApplicationRequest(
     val companySize: CompanySize,
     @field:NotNull(message = "상태를 선택해주세요.")
     val status: ApplicationStatus,
-    val deadline: LocalDateTime? = null,
+    val deadline: LocalDate? = null,
     val url: String? = null,
     @field:Valid
     val coverLetters: List<CoverLetterRequest> = emptyList(),
@@ -28,7 +28,7 @@ data class UpdateApplicationRequest(
     val careerLevel: String? = null,
     val companySize: CompanySize? = null,
     val status: ApplicationStatus? = null,
-    val deadline: LocalDateTime? = null,
+    val deadline: LocalDate? = null,
     val clearDeadline: Boolean = false,
     val url: String? = null,
     @field:Valid

@@ -5,6 +5,8 @@ import com.ember.api.domain.auth.oauth.CustomOAuth2UserService
 import com.ember.api.domain.auth.oauth.OAuth2SuccessHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -37,6 +39,15 @@ class SecurityConfig(
                     .permitAll()
                     .anyRequest()
                     .authenticated()
+            }.exceptionHandling {
+                it.authenticationEntryPoint { _, response, _ ->
+                    response.status = HttpStatus.UNAUTHORIZED.value()
+                    response.contentType = MediaType.APPLICATION_JSON_VALUE
+                    response.characterEncoding = "UTF-8"
+                    response.writer.write(
+                        """{"success":false,"error":{"code":"UNAUTHORIZED","message":"인증이 필요합니다."}}""",
+                    )
+                }
             }.oauth2Login {
                 it.userInfoEndpoint { endpoint ->
                     endpoint.userService(customOAuth2UserService)
